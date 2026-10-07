@@ -6,7 +6,7 @@ BasePort coordinates **service identity, ownership, policy, lifecycle workflows,
 
 Provisioning starts in **BasePort**, invokes the existing **giportal** flow, and routes VM/engine automation through **Ansible**. Backup and recovery use the service's configured provider: this demo illustrates **Rubrik** bindings for some services and platform-native bindings for others. Bindings do not assert actual MetLife coverage. A production workspace could launch from giportal with shared identity or be embedded there; this standalone website demonstrates the service experience.
 
-The custom BasePort SVG mark is used in the wordmark and favicon. The visual design uses MetLife's published primary colors (white, #0090DA, #007ABC, #0061A0 and #A4CE4E) and the published #278280–#0061A0 gradient. MetLife is identified in the workspace selector; no MetLife logo is used. Sources: [Color guidance](https://design.metlife.com/foundations/standards/color/) and [Graphics guidance](https://design.metlife.com/foundations/core-guidance/graphics/). The palette and restrained gradient are adopted; this POC does not claim full design-system certification.
+The custom BasePort SVG mark is used in the wordmark and favicon. The visual design uses MetLife's published primary colors (white, #0090DA, #007ABC, #0061A0 and #A4CE4E) and the published Gradient 6 (#A4CE4E–#0090DA). MetLife is identified in the workspace selector; no MetLife logo is used. Sources: [Color guidance](https://design.metlife.com/foundations/standards/color/) and [Graphics guidance](https://design.metlife.com/foundations/core-guidance/graphics/). The palette and restrained gradient are adopted; this POC does not claim full design-system certification.
 
 ## Run and build
 

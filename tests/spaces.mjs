@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {createStore,reduceStore,validateRequest} from '../src/serviceStore.js';
+import {spaces,availableSpaces,resolveSpace,scopeStore,fleetSummary,canAct} from '../src/spaces.js';
+let store=createStore();
+const personal=resolveSpace('Developer','personal'),postgres=resolveSpace('DBRE','platform-postgres'),oracle=resolveSpace('DBRE','platform-oracle'),fleet=resolveSpace('Management','fleet');
+assert.equal(availableSpaces('Developer').length,1);assert.equal(availableSpaces('DBRE').length,6);assert(availableSpaces('Management').every(s=>['Fleet','Business'].includes(s.kind)));
+for(const role of ['Developer','DBRE','Management'])for(const foreign of spaces.filter(s=>s.role!==role))assert.equal(resolveSpace(role,foreign.id).role,role,'Space ID escalates capability');
+// Personal scope is assignment based; another database on the same team stays private.
+store={...store,services:[...store.services,{...store.services[0],id:'DB-PRIVATE',name:'another-developer-db',ownerId:'other-developer'}],backups:[...store.backups,{...store.backups[0],id:'PRIVATE-BKP',serviceId:'DB-PRIVATE'}],requests:[...store.requests,{...store.requests[1],id:'PRIVATE-REQ',serviceId:'DB-PRIVATE'}]};
+let mine=scopeStore(store,personal);assert.deepEqual(mine.services.map(s=>s.id),['DB-1024']);assert.equal(mine.backups.length,1);assert(!mine.requests.some(r=>r.id==='PRIVATE-REQ'));assert.deepEqual(Object.keys(mine.evidence),['DB-1024']);assert(validateRequest(store,{action:'Backup',serviceId:'DB-PRIVATE',window:'Run now'},'Developer'));const otherTeamOwned={...store,services:store.services.map(s=>s.id==='DB-1024'?{...s,team:'Another owning team'}:s)};assert.equal(validateRequest(otherTeamOwned,{action:'Backup',serviceId:'DB-1024',window:'Run now'},'Developer'),'');assert(!canAct(store,personal,'DB-PRIVATE','Backup'));assert(!canAct(store,personal,'DB-1023','Backup'));assert(!canAct(store,personal,'DB-1024','Patch'));assert(canAct(store,personal,'DB-1024','Backup'));
+for(const space of availableSpaces('DBRE')){const scoped=scopeStore(store,space);assert(scoped.services.every(s=>s.platform===space.platform));assert(scoped.backups.every(b=>scoped.services.some(s=>s.id===b.serviceId)));assert(scoped.requests.every(r=>r.action==='Provision'?r.platform===space.platform:scoped.services.some(s=>s.id===r.serviceId)));assert(scoped.paths.every(p=>p.platforms.length===1&&p.platforms[0]===space.platform))}
+assert(!canAct(store,postgres,'DB-1023','Patch'));assert(canAct(store,oracle,'DB-1023','Patch'));assert(!canAct(store,fleet,'DB-1023','Patch'));assert(!canAct(store,fleet,null,'Provision'));
+// Platform-specific publishing must not modify another platform's runner.
+store=reduceStore(store,{type:'PUBLISH',spaceId:oracle.id,id:'baseline',binding:{template:'96',revision:'abc1234'}});assert.equal(scopeStore(store,oracle).paths[0].template,'96');assert.equal(scopeStore(store,postgres).paths[0].template,'42');
+store=reduceStore(store,{type:'CREATE',persona:'DBRE',form:{action:'Apply baseline',serviceId:'DB-1023',window:'Run now',spaceId:oracle.id}});assert.equal(store.requests[0].path.template,'96');assert.equal(store.requests[0].path.version,'1.3');
+// Pending and provisioned personal requests follow the user's ownership, not the reviewer.
+store=reduceStore(store,{type:'CREATE',persona:'Developer',form:{action:'Provision',name:'personal-mongo',platform:'mongodb',environment:'Development',team:'Policy Servicing',storage:64,window:'Run now',ownerId:'jamie-davis',spaceId:personal.id}});const id=store.requests[0].id;
+assert(scopeStore(store,personal).requests.some(r=>r.id===id));assert(!scopeStore(store,postgres).requests.some(r=>r.id===id));assert(scopeStore(store,resolveSpace('DBRE','platform-mongodb')).requests.some(r=>r.id===id));
+for(const type of ['APPROVE','START','COMPLETE'])store=reduceStore(store,{type,id});mine=scopeStore(store,personal);assert(mine.services.some(s=>s.name==='personal-mongo'));assert.equal(store.services[0].ownerId,'jamie-davis');
+// Executive projection contains aggregates only: no service names, endpoint, schema or execution references.
+const summary=fleetSummary(store,fleet),serialized=JSON.stringify(summary);for(const service of store.services){assert(!serialized.includes(service.name));assert(!serialized.includes(service.id));assert(!serialized.includes(service.version))}
+for(const term of ['sequence','jobId','template','revision','eventId','schema','facts','tlsEnabled','CHG-','BP-'])assert(!serialized.includes(term),term);
+assert.equal(summary.total.count,store.services.length);assert.equal(fleetSummary(store,resolveSpace('Management','business-policy')).total.count,3);
+console.log('Spaces passed: assignment scope, platform boundaries, related records, invalid space IDs, action capabilities, isolated automation revisions, new ownership and aggregate-only management projection.');

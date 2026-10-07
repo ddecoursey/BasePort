@@ -13,7 +13,7 @@ This is an architecture proposal illustrated by a frontend mock. There is no age
 | Rubrik / native tools | Configured backup/recovery execution and provider records |
 | Native consoles / Grafana / Elastic | Detailed administration, diagnostics, monitoring and logs |
 
-Developer and DBRE views are demo UX modes. Policy Servicing is the fictional developer team. This frontend does not implement authentication or authorization.
+Developer, DBRE and Management are demo identities. Personal spaces use explicit owner assignments; platform spaces constrain DBRE service records, automation and reporting; management spaces receive aggregate projections only. Policy Servicing is the fictional developer team. This frontend does not implement authentication or authorization.
 
 ## A golden path
 

@@ -7,8 +7,8 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node tests/evidence-contract.mjs && node tests/service-store.mjs && node tests/app-smoke.cjs",
-    "test:control": "node tests/evidence-contract.mjs && node tests/service-store.mjs",
+    "test": "node tests/evidence-contract.mjs && node tests/service-store.mjs && node tests/spaces.mjs && node tests/app-smoke.cjs",
+    "test:control": "node tests/evidence-contract.mjs && node tests/service-store.mjs && node tests/spaces.mjs",
     "test:demo": "node tests/app-smoke.cjs"
   },
   "dependencies": {

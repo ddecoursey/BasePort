@@ -6,19 +6,33 @@ BasePort provides a consistent service experience and takes care of repetitive w
 
 The standalone website demonstrates a service layer that could launch from giportal with shared identity or be embedded there. It does not require replacing those tools.
 
-## Experience
+## Experience and spaces
 
-- **DBaaS workspace:** managed database cards, platform-level service metrics, lifecycle work and a six-platform catalog. Choose a service profile (32, 64, 128 or 256 GB) and submit a governed request. These are illustrative storage profiles, not production capacity or SLA promises.
-- **Services:** operate a managed database with direct backup, restore, restart, patch, upgrade and migration entry points. Summary, Recovery, Changes and History keep the work in context. One readiness indicator summarizes policy and evidence freshness. Filters support platform, attention and retired records.
-- **Requests:** one Configure → Review → Approval → Execution → Outcome flow. Change context is generated automatically. Only explicit simulated DBRE approval enables execution; request records persist while navigating.
-- **Automation:** DBREs maintain versioned golden paths and pinned AAP/Git bindings. Requests keep the revision they were created with. Recovery and schema delivery retain their provider-specific runners.
-- **Workspace settings:** connections and advanced agentless reporting. Existing jobs send bounded facts; scheduled read-only collection catches changes outside BasePort. No resident agent is needed. Try fresh, drift, duplicate and older observations.
+The original sidebar, overview dashboard, gradient illustration, six-platform catalog tiles and table-based database inventory are restored. The current custom BasePort identity and MetLife palette are retained.
 
-Developers see their fictional Policy Servicing team's services and requests. DBREs see the estate and automation. Use `?view=dbre` for the DBRE view. Persona switching demonstrates UX, not authentication or authorization.
+A **space** combines a resource scope with capabilities. Its selection controls the dashboard, inventory, requests, backups, schema delivery, policy, agentless reporting and automation bindings.
+
+| Audience | Space | Experience |
+| --- | --- | --- |
+| Developer | Personal — My databases | Databases assigned to Jamie Davis, their requests, recovery and schema delivery. Another developer's databases remain outside this space, even on the same team. |
+| DBRE | Platform — PostgreSQL, Oracle, SQL Server, Db2, MongoDB or Cloudera | Assigned platform services, lifecycle operations, related requests, golden paths, drift and bounded agentless facts. |
+| Management | Enterprise fleet or business portfolio | Read-only aggregate service counts, production distribution, protection coverage, attention, capacity and lifecycle demand. |
+
+Management views receive an aggregate projection. They expose no database names, endpoints, SQL, version details, change/job references, automation bindings, reporting workbench or operational controls. Management tours stay within these summaries.
+
+Use the sidebar **Space** selector to move between spaces available to the current demo identity. Switching spaces clears open dialogs, selected records and search. Platform publishing updates only that platform's binding; existing requests retain their original revision. Personal ownership carries into new services and restore clones. Counts and related records come from the same scoped state.
+
+Deep links:
+
+- [Personal space](https://ddecoursey.github.io/BasePort/?view=developer&space=personal)
+- [PostgreSQL platform space](https://ddecoursey.github.io/BasePort/?view=dbre&space=platform-postgres)
+- [Enterprise fleet](https://ddecoursey.github.io/BasePort/?view=management&space=fleet)
+
+**Demo role** switches illustrative identities. This frontend models visibility and action boundaries; it does not implement authentication or enforce confidentiality against browser developer tools. Production membership, record filtering and action authorization must be enforced server-side using authenticated identity. The six platform spaces illustrate assigned grants, not automatic access for every production DBRE.
 
 Freshness, verified restore points and execution-time checks gate sensitive lifecycle actions. Restores create development clones; migrations simulate same-engine staging moves. Targets start without protection or evidence. Schema rollback applies only defined inverses to that service. Retirement retains records. No real SQL, infrastructure or vendor API calls occur.
 
-See [the agentless control plane proposal](docs/agentless-control-plane.md) for reporting, trust boundaries and production reconciliation design. All state is in memory and resets on reload. All jobs, approvals, backups, endpoints, versions and integrations are mocked.
+See [the agentless control plane proposal](docs/agentless-control-plane.md) and [spaces and capabilities](docs/spaces.md). All state is in memory and resets on reload. All jobs, approvals, backups, endpoints, versions and integrations are mocked.
 
 ## Run and validate
 
@@ -35,7 +49,7 @@ With the development server running:
 npm test
 ```
 
-Checks cover workflow state and races, explicit approvals, scope, pinned revisions, drift preservation, schema rollback, isolated clones, registration, freshness, agentless input validation and desktop/mobile interactions. The tour is checked for focus containment and restoring existing work. Browser tests use `/usr/bin/chromium` in the cloud environment or Playwright's Chromium elsewhere. Set `DEMO_TEST_URL` to target a different local server. `npm run test:control` runs model checks without a server.
+Checks cover assignment-based personal visibility, platform boundaries, related-record filtering, isolated automation revisions, aggregate-only management, workflow races, approvals, schema rollback, clone ownership, freshness and bounded agentless input. Browser checks exercise the restored desktop and mobile UI and assert technical data and controls are absent from management screens. The tour is checked for focus containment and restoring existing work. Browser tests use `/usr/bin/chromium` in the cloud environment or Playwright's Chromium elsewhere. Set `DEMO_TEST_URL` to target a different local server. `npm run test:control` runs model checks without a server.
 
 ```sh
 npm run build -- --base=./
@@ -44,7 +58,7 @@ npm run preview
 
 ## Binaya's tour
 
-Share [the manager demo](https://ddecoursey.github.io/BasePort/?demo=binaya) for a six-step interactive explanation of the shared service layer, two personas, automated paperwork, golden paths and agentless reporting. Choose a platform, go Back, Replay or Escape. Temporary tour records are removed and previous work is restored on exit. **Take the tour** in the header opens it anytime.
+Share [the manager demo](https://ddecoursey.github.io/BasePort/?demo=binaya) for a six-step explanation of spaces, scoped self-service, platform operations and read-only fleet visibility. The link opens Management by default. DBRE tours can try a platform space; all tours support Back, Replay and Escape and restore the previous space and screen. **Guided manager demo** in the sidebar opens it anytime.
 
 ## Visual identity
 

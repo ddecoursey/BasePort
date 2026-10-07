@@ -1,13 +1,14 @@
 import {initialServices,initialBackups,initialChanges,platformById,backupProvider} from './data.js';
 import {initialEvidence,initialPaths,desiredFacts,assess,validateObservation} from './controlPlane.js';
 export const developerTeam='Policy Servicing';
+export const developerOwner='jamie-davis';
 export const actions=['Apply baseline','Backup','Restore clone','Restart','Patch','Upgrade','Migrate','Schema update','Schema rollback','Retire'];
 export function createStore(){
  const evidence=initialEvidence();
- return {services:initialServices.map(s=>({...s})),backups:initialBackups.map(b=>({...b})),evidence,seenEvents:Object.values(evidence).map(e=>e.eventId),paths:initialPaths.map(p=>({...p})),changes:{},counter:100,requests:[
+ return {services:initialServices.map((s,i)=>({...s,ownerId:i===0?'jamie-davis':`owner-${s.id}`})),backups:initialBackups.map(b=>({...b})),evidence,seenEvents:Object.values(evidence).map(e=>e.eventId),paths:initialPaths.map(p=>({...p})),changes:{},counter:100,requests:[
   {id:'BP-0099',serviceId:'DB-1023',serviceName:'finance-core-db',action:'Patch',status:'Scheduled',change:'CHG-2084',environment:'Production',team:'Finance & Operations',window:'Next maintenance window',target:'19.24',path:{...initialPaths[1]},created:'Today',history:[{label:'Change created',actor:'BasePort',detail:'CHG-2084'},{label:'Approved',actor:'Demo reviewer',detail:'Next maintenance window'}]},
-  {id:'BP-0098',serviceId:'DB-1024',serviceName:'policy-servicing-prod',action:'Schema update',status:'Awaiting approval',change:'CHG-2081',environment:'Production',team:developerTeam,window:'Run now',created:'Today',history:[{label:'Change created',actor:'BasePort',detail:'CHG-2081'}]},
-  {id:'BP-0097',serviceId:'DB-1024',serviceName:'policy-servicing-prod',action:'Backup',status:'Completed',change:'POL-BACKUP-14D',environment:'Production',team:developerTeam,window:'Run now',created:'Today',jobId:'RUB-DEMO-301',history:[{label:'Backup verified',actor:'Recovery policy',detail:'Rubrik · demo provider'}]}
+  {id:'BP-0098',serviceId:'DB-1024',serviceName:'policy-servicing-prod',action:'Schema update',status:'Awaiting approval',change:'CHG-2081',environment:'Production',team:developerTeam,ownerId:'jamie-davis',window:'Run now',created:'Today',history:[{label:'Change created',actor:'BasePort',detail:'CHG-2081'}]},
+  {id:'BP-0097',serviceId:'DB-1024',serviceName:'policy-servicing-prod',action:'Backup',status:'Completed',change:'POL-BACKUP-14D',environment:'Production',team:developerTeam,ownerId:'jamie-davis',window:'Run now',created:'Today',jobId:'RUB-DEMO-301',history:[{label:'Backup verified',actor:'Recovery policy',detail:'Rubrik · demo provider'}]}
  ]};
 }
 export const serviceState=(s,evidence)=>s.status==='Retired'?{label:'Retired',tone:'muted'}:({Aligned:{label:'Ready',tone:'good'},Drift:{label:'Needs attention',tone:'attention'},Unknown:{label:'Needs sync',tone:'muted'}}[assess(s,evidence[s.id]).status]);
@@ -25,7 +26,7 @@ export function validateRequest(store,form,persona){
  const s=store.services.find(s=>s.id===form.serviceId);
  if(!s||s.status==='Retired')return 'Select an active service.';
  if(!actions.includes(form.action))return 'Choose a supported action.';
- if(persona==='Developer'&&(s.team!==developerTeam||!['Backup','Restore clone','Schema update','Schema rollback'].includes(form.action)))return 'This action requires the DBRE view.';
+ if(persona==='Developer'&&(s.ownerId!==developerOwner||!['Backup','Restore clone','Schema update','Schema rollback'].includes(form.action)))return 'This action requires the DBRE view.';
  if(['Schema update','Schema rollback'].includes(form.action)&&!platformById(s.platform).relational)return 'This platform uses native change tooling.';
  if(['Restore clone','Migrate'].includes(form.action)&&(!/^[a-z][a-z0-9-]{2,47}$/.test(form.target)||store.services.some(s=>s.name===form.target)||store.requests.some(r=>r.target===form.target&&['Restore clone','Migrate'].includes(r.action)&&r.status!=='Completed')))return 'Choose a unique target name using lowercase letters, numbers or hyphens.';
  if(form.action==='Restore clone'&&!store.backups.some(b=>b.id===form.backupId&&b.serviceId===s.id&&b.status==='Verified'))return 'Select a verified restore point.';
@@ -59,13 +60,15 @@ export function reduceStore(store,event){
   if(result.error)return store;
   return {...store,evidence:{...store.evidence,[result.record.serviceId]:result.record},seenEvents:[...store.seenEvents,result.record.eventId]};
  }
+ if(event.type==='PUBLISH'&&event.spaceId){const paths=store.spacePaths?.[event.spaceId]||store.paths;return {...store,spacePaths:{...store.spacePaths,[event.spaceId]:paths.map(p=>p.id===event.id?{...p,...event.binding,version:`${p.version.split('.')[0]}.${Number(p.version.split('.')[1])+1}`}:p)}}}
  if(event.type==='PUBLISH')return {...store,paths:store.paths.map(p=>p.id===event.id?{...p,...event.binding,version:`${p.version.split('.')[0]}.${Number(p.version.split('.')[1])+1}`}:p)};
  if(event.type==='CREATE'){
   if(validateRequest(store,event.form,event.persona))return store;
   const f=event.form,s=store.services.find(s=>s.id===f.serviceId),counter=store.counter+1,id=`BP-${String(counter).padStart(4,'0')}`,change=`CHG-${3000+counter}`;
   const pathId=f.action==='Provision'?'provision':f.action==='Apply baseline'?'baseline':['Restart','Patch','Upgrade','Migrate','Retire'].includes(f.action)?'patch':null;
-  const path=store.paths.find(p=>p.id===pathId);
-  const request={...f,id,serviceName:f.action==='Provision'?f.name:s.name,team:f.action==='Provision'?f.team:s.team,environment:f.action==='Provision'?f.environment:s.environment,status:'Awaiting approval',change,created:'Just now',path:path?{...path}:null,history:[{label:'Change created',actor:'BasePort',detail:`${change} · owner, scope and rollback context populated`}],schemaBefore:s?.schema};
+  const platform=f.action==='Provision'?f.platform:s.platform;
+  const path=(store.spacePaths?.[`platform-${platform}`]||store.paths).find(p=>p.id===pathId);
+  const request={...f,ownerId:f.ownerId||s?.ownerId||'platform-operators',id,serviceName:f.action==='Provision'?f.name:s.name,team:f.action==='Provision'?f.team:s.team,environment:f.action==='Provision'?f.environment:s.environment,status:'Awaiting approval',change,created:'Just now',path:path?{...path}:null,history:[{label:'Change created',actor:'BasePort',detail:`${change} · owner, scope and rollback context populated`}],schemaBefore:s?.schema};
   return {...store,counter,requests:[request,...store.requests]};
  }
  const request=store.requests.find(r=>r.id===event.id);if(!request)return store;
@@ -79,7 +82,7 @@ export function reduceStore(store,event){
  if(problem)return update({status:'Approved',error:problem},{label:'Execution blocked',actor:'BasePort',detail:problem});
  let next={...store},s=store.services.find(s=>s.id===request.serviceId),result='Completed',jobId=`AAP-DEMO-${request.id}`;
  if(request.action==='Provision'){
-  s={id:`DB-${request.id}`,name:request.serviceName,platform:request.platform,version:platformById(request.platform).patch,environment:request.environment,team:request.team,storage:Number(request.storage),backup:'Unprotected',patch:'Up to date',origin:`GIP-DEMO-${request.id}`,schema:platformById(request.platform).relational?'v0':'Platform-managed',status:'Active'};
+  s={ownerId:request.ownerId,id:`DB-${request.id}`,name:request.serviceName,platform:request.platform,version:platformById(request.platform).patch,environment:request.environment,team:request.team,storage:Number(request.storage),backup:'Unprotected',patch:'Up to date',origin:`GIP-DEMO-${request.id}`,schema:platformById(request.platform).relational?'v0':'Platform-managed',status:'Active'};
   next.services=[s,...store.services];result='Service registered. Protection and fresh evidence are required.';
  }
  if(request.action==='Apply baseline'||['Patch','Upgrade'].includes(request.action)){

@@ -6,3 +6,6 @@
 
 /* Gradient 6 uses dark text for contrast across both color stops. */
 .compact-hero h2,.compact-hero p,.dbaas-app .compact-hero .eyebrow{color:#000016}.dbaas-app .compact-hero .button.primary{background:#fff;color:#0061A0;border-color:#fff;box-shadow:none}.dbaas-app .compact-hero .button.primary:hover{background:#f2f2f2;border-color:#f2f2f2}
+
+/* Custom folded gateway: open aperture, connected planes and a stable base. */
+.dbaas-app .baseport-logo{width:43px;height:43px}.dbaas-app .brand{gap:9px;letter-spacing:-1px}.brand-wordmark{font-weight:800}.brand-wordmark>span{font-weight:600}.dbaas-app .brand-subtitle{margin-left:64px}

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
   <title>BasePort — the governed gateway</title>
-  <defs>
+  <rect width="80" height="80" rx="18" fill="#F4F8FB"/><g transform="translate(8 8)"><defs>
     <linearGradient id="port" x1="8" y1="17" x2="56" y2="17" gradientUnits="userSpaceOnUse">
       <stop stop-color="#A4CE4E"/>
       <stop offset="1" stop-color="#0090DA"/>
@@ -10,4 +10,4 @@
   <path d="M8 17 20 24V40L32 47V61L8 47Z" fill="#19364B"/>
   <path d="M56 17V47L32 61V47L44 40V24Z" fill="#0090DA"/>
   <path d="m20 34 12 7 12-7v6l-12 7-12-7Z" fill="#0061A0"/>
-</svg>
+</g></svg>

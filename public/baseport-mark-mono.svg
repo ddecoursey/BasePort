@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><title>BasePort</title>
+  <path d="M8 17 32 3 56 17 44 24 32 17 20 24Z" fill="currentColor"/>
+  <path d="M8 17 20 24V40L32 47V61L8 47Z" fill="currentColor"/>
+  <path d="M56 17V47L32 61V47L44 40V24Z" fill="currentColor"/>
+  <path d="m20 34 12 7 12-7v6l-12 7-12-7Z" fill="currentColor"/>
+</svg>

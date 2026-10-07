@@ -8,7 +8,8 @@ The standalone website demonstrates a service layer that could launch from gipor
 
 ## Experience
 
-- **Services:** start with a service. Summary, Recovery, Changes and History keep the work in context. One readiness indicator summarizes policy and evidence freshness. Filters support platform, attention and retired records.
+- **DBaaS workspace:** managed database cards, platform-level service metrics, lifecycle work and a six-platform catalog. Choose a service profile (32, 64, 128 or 256 GB) and submit a governed request. These are illustrative storage profiles, not production capacity or SLA promises.
+- **Services:** operate a managed database with direct backup, restore, restart, patch, upgrade and migration entry points. Summary, Recovery, Changes and History keep the work in context. One readiness indicator summarizes policy and evidence freshness. Filters support platform, attention and retired records.
 - **Requests:** one Configure → Review → Approval → Execution → Outcome flow. Change context is generated automatically. Only explicit simulated DBRE approval enables execution; request records persist while navigating.
 - **Automation:** DBREs maintain versioned golden paths and pinned AAP/Git bindings. Requests keep the revision they were created with. Recovery and schema delivery retain their provider-specific runners.
 - **Workspace settings:** connections and advanced agentless reporting. Existing jobs send bounded facts; scheduled read-only collection catches changes outside BasePort. No resident agent is needed. Try fresh, drift, duplicate and older observations.

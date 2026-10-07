@@ -3,8 +3,8 @@ import {ArrowLeft,ArrowRight,Layers3} from 'lucide-react';
 import {Modal} from './ui.jsx';
 import {platforms} from './data.js';
 const steps=[
- ['A simpler way to manage DBaaS','Binaya, BasePort gives teams one service experience across MetLife’s database stack. It connects ownership, policy and lifecycle work to the tools already in place.'],
- ['Start with the service','Find a service across six platforms. A small readiness signal shows policy findings or stale facts. Native consoles and observability tools keep their specialist roles.'],
+ ['DBaaS across the enterprise stack','Binaya, teams choose a database offering and manage it as a service. BasePort brings provisioning, recovery, schema delivery and lifecycle work into one experience.'],
+ ['Choose the service your team needs','Six database offerings share service profiles and an enterprise baseline. Provisioning follows giportal and Ansible; the service then stays in BasePort for its full lifecycle.'],
  ['Everything in context','Ownership, recovery, schema changes and history live with the service. Developers use safe self-service paths; DBREs manage policy and lifecycle actions.'],
  ['Paperwork follows the work','A request prepares the change record, waits for explicit approval, then calls the existing execution layer. Results and job references return to the same record.'],
  ['Build once. Reuse consistently.','DBREs own the automation. Versioned paths pin approved bindings. Agentless job callbacks and scheduled read-only collection keep the service record accurate.'],

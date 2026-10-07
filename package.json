@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test:demo": "node tests/demo-smoke.cjs",
-    "test:dbaas": "node tests/dbaas-smoke.cjs"
+    "test:dbaas": "node tests/dbaas-smoke.cjs",
+    "test:stack": "node tests/connected-stack-smoke.cjs"
   },
   "dependencies": {
     "react": "^19.1.0",

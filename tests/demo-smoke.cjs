@@ -7,10 +7,10 @@ const options={headless:true,args:['--no-sandbox']};if(fs.existsSync('/usr/bin/c
  for(const mobile of [false,true]){
   const page=await browser.newPage({viewport:mobile?{width:390,height:844}:{width:1440,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(baseURL+'?demo=binaya');const tour=page.locator('.tour-panel');
-  await tour.getByRole('heading',{name:'Binaya, meet the DBaaS management workspace.'}).waitFor();
+  await tour.getByRole('heading',{name:'Binaya, meet connected DBaaS for MetLife.'}).waitFor();
   await page.keyboard.press('Tab');assert(await page.evaluate(()=>!!document.activeElement.closest('.tour-panel')));
   await tour.getByRole('button',{name:'See how it fits'}).click();
-  assert((await tour.textContent()).includes('no need for another independent enterprise website'));
+  assert((await tour.textContent()).includes('Vendor consoles remain the experts for engine management'));
   await tour.getByRole('button',{name:'Explore the database estate'}).click();
   await tour.getByRole('button',{name:mobile?'MongoDB':'SQL Server',exact:true}).click();
   assert.equal(await page.locator('.inventory-panel tbody tr').count(),1);
@@ -29,7 +29,7 @@ const options={headless:true,args:['--no-sandbox']};if(fs.existsSync('/usr/bin/c
   await tour.getByRole('button',{name:'See the management value'}).click();
   await page.waitForTimeout(250);await page.screenshot({path:`/tmp/baseport-dbaas-tour-${mobile?'mobile':'desktop'}.png`});
   await tour.getByRole('button',{name:'Replay the demo'}).click();
-  await tour.getByRole('heading',{name:'Binaya, meet the DBaaS management workspace.'}).waitFor();
+  await tour.getByRole('heading',{name:'Binaya, meet connected DBaaS for MetLife.'}).waitFor();
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('.tour-panel').count(),0);
   assert(!new URL(page.url()).searchParams.has('demo'));

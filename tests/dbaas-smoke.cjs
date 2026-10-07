@@ -6,7 +6,7 @@ const assert=require('node:assert/strict');const {chromium}=require('@playwright
  await nav('Database inventory');assert.equal(await page.locator('.inventory-panel tbody tr').count(),6);
  await page.getByLabel('Inventory environment').selectOption('Development');assert.equal(await page.locator('.inventory-panel tbody tr').count(),1);
  await page.getByLabel('Inventory environment').selectOption('all');
- await page.getByRole('button',{name:'customer-insights-prod',exact:true}).click();
+ await page.getByRole('button',{name:'policy-servicing-prod',exact:true}).click();
  await page.locator('.detail-action-row').getByRole('button',{name:'Backup',exact:true}).click();let modal=page.getByRole('dialog');
  await modal.getByRole('button',{name:'Run simulation'}).click();await page.getByRole('alert').waitFor();
  assert((await page.getByRole('alert').textContent()).includes('Production operations require'));
@@ -24,8 +24,8 @@ const assert=require('node:assert/strict');const {chromium}=require('@playwright
  await page.getByRole('button',{name:'Run mock preflight',exact:true}).click();
  await page.getByRole('button',{name:'Review patch'}).click();modal=page.getByRole('dialog');
  await modal.getByLabel('Change reference',{exact:false}).fill('CHG-2093');await modal.getByRole('button',{name:'Schedule mock operation'}).click();await modal.waitFor({state:'hidden'});
- await page.locator('.scheduled-panel tbody tr').filter({hasText:'customer-insights-prod'}).getByRole('button',{name:'Simulate execution'}).click();
- await nav('Database inventory');await page.getByRole('button',{name:'customer-insights-prod',exact:true}).click();assert((await page.locator('.db-detail-head').textContent()).includes('16.6'));
+ await page.locator('.scheduled-panel tbody tr').filter({hasText:'policy-servicing-prod'}).getByRole('button',{name:'Simulate execution'}).click();
+ await nav('Database inventory');await page.getByRole('button',{name:'policy-servicing-prod',exact:true}).click();assert((await page.locator('.db-detail-head').textContent()).includes('16.6'));
  await page.locator('.detail-action-row').getByRole('button',{name:'Upgrade',exact:true}).click();modal=page.getByRole('dialog');
  await modal.getByLabel('Change reference',{exact:false}).fill('CHG-2094');await modal.getByLabel('Reason for change').fill('Validate major-version upgrade flow');await modal.getByLabel('Maintenance window').selectOption('Run now');
  await modal.getByRole('button',{name:'Run mock preflight'}).click();await modal.getByRole('button',{name:'Run simulation'}).click();await modal.waitFor({state:'hidden'});assert((await page.locator('.db-detail-head').textContent()).includes('17.2'));
@@ -39,8 +39,8 @@ const assert=require('node:assert/strict');const {chromium}=require('@playwright
  await page.locator('.liquibase-top').getByLabel('Database selection').selectOption('DB-1024');assert((await page.locator('.change-summary').textContent()).includes('0 pending'));
  await page.getByLabel('Simulated production approval').check();await page.getByRole('button',{name:'Simulate defined rollback'}).click();await page.waitForFunction(()=>document.querySelector('.change-summary')?.textContent.includes('2 pending'));
  await page.locator('.liquibase-top').getByLabel('Database selection').selectOption('DB-1022');await page.getByRole('heading',{name:'Liquibase workflow is demonstrated for relational platforms.'}).waitFor();assert.equal(await page.getByRole('button',{name:'Simulate update'}).count(),0);
- await nav('Database inventory');await page.getByRole('button',{name:'product-catalog-dev',exact:true}).click();await page.locator('.detail-action-row').getByRole('button',{name:'Retire',exact:true}).click();modal=page.getByRole('dialog');await modal.getByLabel('Reason for change').fill('Retire the mock development service');await modal.getByRole('button',{name:'Run mock preflight'}).click();await modal.getByRole('button',{name:'Run simulation'}).click();await modal.waitFor({state:'hidden'});assert((await page.locator('.db-detail-head').textContent()).includes('Retired'));
- await page.getByRole('button',{name:'giportal',exact:true}).click();modal=page.getByRole('dialog');await modal.locator('summary').click();await modal.getByLabel('Service name',{exact:true}).fill('giportal-handoff-demo');await modal.getByRole('button',{name:'Simulate handoff'}).click();await page.getByRole('button',{name:'giportal-handoff-demo',exact:true}).waitFor();
+ await nav('Database inventory');await page.getByRole('button',{name:'claims-documents-dev',exact:true}).click();await page.locator('.detail-action-row').getByRole('button',{name:'Retire',exact:true}).click();modal=page.getByRole('dialog');await modal.getByLabel('Reason for change').fill('Retire the mock development service');await modal.getByRole('button',{name:'Run mock preflight'}).click();await modal.getByRole('button',{name:'Run simulation'}).click();await modal.waitFor({state:'hidden'});assert((await page.locator('.db-detail-head').textContent()).includes('Retired'));
+ await page.getByRole('button',{name:'BasePort',exact:true}).click();modal=page.getByRole('dialog');await modal.locator('summary').click();await modal.getByLabel('Service name',{exact:true}).fill('giportal-handoff-demo');await modal.getByRole('button',{name:'Simulate handoff'}).click();await page.getByRole('button',{name:'giportal-handoff-demo',exact:true}).waitFor();
  await nav('Audit & activity');assert(await page.locator('.audit-panel tbody tr').count()>=12);await page.locator('.audit-panel tbody tr').first().click();await page.getByRole('dialog').getByText('giportal handoff',{exact:true}).waitFor();
  assert.deepEqual(errors,[]);console.log('DBaaS smoke passed: inventory, production controls, backup, restore clone, preflight failure, patch scheduling/execution, upgrade, restart, migration validation, scoped Liquibase update/rollback, capability boundary, retirement, giportal handoff, audit.');
  await page.close();

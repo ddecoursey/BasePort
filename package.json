@@ -7,10 +7,9 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test:demo": "node tests/demo-smoke.cjs",
-    "test:dbaas": "node tests/dbaas-smoke.cjs",
-    "test:stack": "node tests/connected-stack-smoke.cjs",
-    "test:control": "node tests/evidence-contract.mjs && node tests/control-plane-smoke.cjs"
+    "test": "node tests/evidence-contract.mjs && node tests/service-store.mjs && node tests/app-smoke.cjs",
+    "test:control": "node tests/evidence-contract.mjs && node tests/service-store.mjs",
+    "test:demo": "node tests/app-smoke.cjs"
   },
   "dependencies": {
     "react": "^19.1.0",

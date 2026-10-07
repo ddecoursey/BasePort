@@ -26,6 +26,6 @@ export function validateObservation(payload,services,evidence,seenEvents,now=Dat
 }
 export const initialPaths=[
  {id:'baseline',name:'Enforce baseline',version:'1.2',template:'42',revision:'a7c24f1',status:'Published',description:'TLS & retention policy',platforms:['postgres','oracle','sqlserver','db2','mongodb','cloudera']},
- {id:'patch',name:'Patch database',version:'1.4',template:'58',revision:'d6b28a4',status:'Published',description:'Preflight → change → AAP → evidence',platforms:['postgres','oracle','sqlserver','db2','mongodb','cloudera']},
+ {id:'patch',name:'Database lifecycle',version:'1.4',template:'58',revision:'d6b28a4',status:'Published',description:'Restart, patch, upgrade, migrate and retire',platforms:['postgres','oracle','sqlserver','db2','mongodb','cloudera']},
  {id:'provision',name:'Provision service',version:'2.0',template:'73',revision:'c7f61d2',status:'Published',description:'giportal → AAP → registration',platforms:['postgres','oracle','sqlserver','db2','mongodb','cloudera']},
 ];

@@ -1,14 +1,25 @@
-# BasePort — lightweight DBaaS control plane
+# BasePort — a shared DBaaS service layer
 
-BasePort is a frontend-only, MetLife-tailored proof of concept for a consistent database-as-a-service experience across the existing enterprise stack. Fictional policy, claims, finance, actuarial, group benefits and underwriting services illustrate the experience.
+A frontend-only, MetLife-tailored proof of concept across Oracle, SQL Server, Db2, PostgreSQL, MongoDB and Cloudera. Fictional services illustrate ownership, policy, recovery and lifecycle workflows across the existing enterprise stack.
 
-BasePort coordinates **service identity, ownership, policy, lifecycle workflows, contextual handoffs and correlated execution history**. It does not aim to improve on vendor-native administration or replace observability. Native consoles retain engine operations and diagnostics; Grafana and Elastic retain dashboards, alerts and logs; ServiceNow retains enterprise change/CMDB records; Git and Liquibase retain schema delivery.
+BasePort provides a consistent service experience and takes care of repetitive workflow context. Vendor consoles retain engine administration; Grafana and Elastic retain observability; ServiceNow remains the change authority. Provisioning calls the existing **giportal → Ansible AAP** flow. Recovery calls the configured **Rubrik or platform-native** provider. Git and Liquibase own relational schema delivery. These are illustrative bindings, not claims about MetLife production coverage.
 
-Provisioning starts in **BasePort**, invokes the existing **giportal** flow, and routes VM/engine automation through **Ansible**. Backup and recovery use the service's configured provider: this demo illustrates **Rubrik** bindings for some services and platform-native bindings for others. Bindings do not assert actual MetLife coverage. A production workspace could launch from giportal with shared identity or be embedded there; this standalone website demonstrates the service experience.
+The standalone website demonstrates a service layer that could launch from giportal with shared identity or be embedded there. It does not require replacing those tools.
 
-The custom BasePort mark uses a folded gateway, an open aperture and a grounded base to represent a service control plane across execution layers. Its canopy uses Gradient 6. A dedicated favicon and a monochrome SVG are included in `public/`. The visual design uses MetLife's published primary colors (white, #0090DA, #007ABC, #0061A0 and #A4CE4E) and the published Gradient 6 (#A4CE4E–#0090DA). MetLife is identified in the workspace selector; no MetLife logo is used. Sources: [Color guidance](https://design.metlife.com/foundations/standards/color/) and [Graphics guidance](https://design.metlife.com/foundations/core-guidance/graphics/). The palette and restrained gradient are adopted; this POC does not claim full design-system certification.
+## Experience
 
-## Run and build
+- **Services:** start with a service. Summary, Recovery, Changes and History keep the work in context. One readiness indicator summarizes policy and evidence freshness. Filters support platform, attention and retired records.
+- **Requests:** one Configure → Review → Approval → Execution → Outcome flow. Change context is generated automatically. Only explicit simulated DBRE approval enables execution; request records persist while navigating.
+- **Automation:** DBREs maintain versioned golden paths and pinned AAP/Git bindings. Requests keep the revision they were created with. Recovery and schema delivery retain their provider-specific runners.
+- **Workspace settings:** connections and advanced agentless reporting. Existing jobs send bounded facts; scheduled read-only collection catches changes outside BasePort. No resident agent is needed. Try fresh, drift, duplicate and older observations.
+
+Developers see their fictional Policy Servicing team's services and requests. DBREs see the estate and automation. Use `?view=dbre` for the DBRE view. Persona switching demonstrates UX, not authentication or authorization.
+
+Freshness, verified restore points and execution-time checks gate sensitive lifecycle actions. Restores create development clones; migrations simulate same-engine staging moves. Targets start without protection or evidence. Schema rollback applies only defined inverses to that service. Retirement retains records. No real SQL, infrastructure or vendor API calls occur.
+
+See [the agentless control plane proposal](docs/agentless-control-plane.md) for reporting, trust boundaries and production reconciliation design. All state is in memory and resets on reload. All jobs, approvals, backups, endpoints, versions and integrations are mocked.
+
+## Run and validate
 
 Requires Node.js 20.19+ or 22.12+.
 
@@ -17,48 +28,31 @@ npm ci
 npm run dev -- --port 3000
 ```
 
+With the development server running:
+
 ```sh
-npm run build
+npm test
+```
+
+Checks cover workflow state and races, explicit approvals, scope, pinned revisions, drift preservation, schema rollback, isolated clones, registration, freshness, agentless input validation and desktop/mobile interactions. The tour is checked for focus containment and restoring existing work. Browser tests use `/usr/bin/chromium` in the cloud environment or Playwright's Chromium elsewhere. Set `DEMO_TEST_URL` to target a different local server. `npm run test:control` runs model checks without a server.
+
+```sh
+npm run build -- --base=./
 npm run preview
 ```
 
-## Experiences
+## Binaya's tour
 
-- **Developer:** a concise team workspace, owned services, approved service requests, recovery and schema delivery. Demo team: Policy Servicing.
-- **DBRE:** estate inventory, versioned golden paths, policy/drift, agentless evidence, lifecycle work and service insights. Use `?view=dbre` to open this view.
-- **Golden paths:** edit a mock AAP template and pinned Git SHA; publish a revision. Pending runs preserve their original binding.
-- **Governed runs:** generate a change record, wait for an explicit simulated reviewer, execute the approved path, and reconcile evidence. Pending baseline runs survive closing the dialog.
-- **Policy & drift:** compare desired TLS, retention and declared version with fresh observed facts. Missing/stale reports become Unknown; recovery protection is checked separately.
-- **Agentless sync:** a small JSON contract for existing AAP jobs, pipeline callbacks and scheduled read-only reconciliation. Try fresh facts, drift, duplicate and older reports. No resident VM/database agent or working backend is included.
-- **Existing workflows:** provider-aware backups, isolated restore clones, migration assessments, relational Liquibase demos and contextual tool handoffs remain available.
+Share [the manager demo](https://ddecoursey.github.io/BasePort/?demo=binaya) for a six-step interactive explanation of the shared service layer, two personas, automated paperwork, golden paths and agentless reporting. Choose a platform, go Back, Replay or Escape. Temporary tour records are removed and previous work is restored on exit. **Take the tour** in the header opens it anytime.
 
-See [the agentless control plane proposal](docs/agentless-control-plane.md) for the ownership model, reporting contract, production trust boundaries and reconciliation design. Persona switching demonstrates UX, not production access control.
+## Visual identity
 
-All state is in memory and resets on reload. All connection endpoints, versions, checks, approvals, backups, metrics, SQL execution, integrations, and operations are illustrative. No actual infrastructure is provisioned or managed. All browser tests operate on mock state only.
+The custom BasePort folded gateway mark represents an open service layer across execution tools. A dedicated favicon and monochrome SVG live in `public/`. MetLife is identified only in the workspace selector; no MetLife logo is used.
 
-## Binaya's manager demo
-
-Share `https://ddecoursey.github.io/BasePort/?demo=binaya` for the nine-step guided demo. It explains the two views, golden paths, drift, agentless reporting, automated paperwork and existing execution layers. It supports platform choice, Back, Replay, and Escape. Demo changes are isolated and the original records are restored on exit. The normal sidebar also offers **Guided manager demo**.
-
-## Validation
-
-With the local development server running:
-
-```sh
-npm run test:dbaas
-npm run test:demo
-npm run test:stack
-npm run test:control
-```
-
-The DBaaS smoke test checks meaningful state transitions and guardrails: production change references, verified restore points, clone registration, preflight failure, scheduling/execution, version updates, migration validation, database-scoped Liquibase state and rollback, unsupported capabilities, retirement, handoff, and audit records. The manager demo test runs on desktop and mobile, checks keyboard focus and platform selection, and verifies demo cleanup preserves existing backups. The connected-stack test checks automatic change creation, explicit reviewer approval, route progression, correlation IDs, service registration, provider bindings, contextual tool handoffs, service insights and mobile overflow. Control-plane checks cover freshness, input types, sequencing, deduplication, drift, persisted runs, pinned revisions, approval gates and scoped developer screens.
-
-Tests use `/usr/bin/chromium` in the cloud environment. The manager test falls back to Playwright's installed Chromium elsewhere. Set `DEMO_TEST_URL` to use another local server.
+The palette uses published MetLife colors and **Gradient 6 (#A4CE4E → #0090DA)**, with a restrained gradient rule and action accents. Sources: [Color guidance](https://design.metlife.com/foundations/standards/color/) and [Graphics guidance](https://design.metlife.com/foundations/core-guidance/graphics/). This POC does not claim full design-system certification.
 
 ## GitHub Pages
 
-`.github/workflows/deploy-pages.yml` builds the static production frontend after pushes to `main` or a manual workflow dispatch. Relative asset URLs support repository subpaths.
+[Live site](https://ddecoursey.github.io/BasePort/). `.github/workflows/deploy-pages.yml` builds and publishes the production artifact on pushes to `main` or manual dispatch. Relative assets support repository subpaths.
 
-Use **Settings → Pages → Source → GitHub Actions** for workflow-based publishing. The currently available GitHub integration can deploy a Pages artifact but cannot change that administrative setting. If legacy branch publishing is still configured, it also triggers a source build; cancel the source build for the same commit before deploying the built artifact to prevent it replacing the frontend with raw source.
-
-Site: `https://ddecoursey.github.io/BasePort/`. No custom deployment secrets or application API keys are required.
+Configure **Settings → Pages → Source → GitHub Actions** for workflow publishing. The currently available GitHub integration cannot change that administrative setting. If legacy branch publishing remains configured, cancel its source-build run for the same commit before the production artifact deploys, so raw source cannot replace the frontend. No custom application secrets are required.

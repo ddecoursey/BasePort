@@ -43,3 +43,19 @@ The included `.github/workflows/deploy-pages.yml` builds and deploys this static
 4. After deployment succeeds, open the site URL shown in **Settings → Pages** or the workflow's deployment output. For `ddecoursey/BasePort`, the default URL is `https://ddecoursey.github.io/BasePort/`.
 
 The Pages build uses relative asset URLs so it works under a repository subpath. No API keys or custom deployment secrets are required. Deployment has not been run from this workspace; the URL becomes available only after a successful GitHub deployment.
+
+## Guided demo for Binaya
+
+Share `https://ddecoursey.github.io/BasePort/?demo=binaya` to start the personalized manager walkthrough immediately. The regular overview also includes a **Start guided demo** button, and the sidebar offers **Guided manager demo** from any page.
+
+The nine-step tour explains the purpose of BasePort, its intended business value, the platform catalog, a prefilled service request, review and tracking, simulated approval/provisioning, service ownership, and usage insights. The viewer can choose any of the six platforms, go back, replay, or leave with Escape. The summary separates the frontend concept from production integration requirements and proposes measures for evaluating value.
+
+Demo requests and services are temporary: finishing or exiting restores the prior services, requests, page, and filters. Existing user-created mock requests remain intact. The direct demo URL contains no authentication or personal data beyond the first name used in the greeting.
+
+With the dev server running, verify the tour on desktop and mobile:
+
+```sh
+npm run test:demo
+```
+
+The browser smoke script uses installed Chromium when available, or Playwright's Chromium otherwise. Set `DEMO_TEST_URL` to test another local server. All interactions remain mock-only.

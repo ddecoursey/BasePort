@@ -1,8 +1,10 @@
-# BasePort
+# BasePort — DBaaS management workspace
 
-A frontend proof of concept for an internal enterprise data platform portal. Built with React, Vite, and Lucide icons. All services, health metrics, requests, and operations are mocked; no backend or enterprise systems are contacted.
+BasePort is a frontend-only proof of concept for database-as-a-service management within the existing **giportal** ecosystem.
 
-## Run locally
+**giportal remains the infrastructure entry point:** service requests, VM and database provisioning, and enterprise workflows. **BasePort adds database management depth:** inventory, backup and recovery, restart, patch, upgrade, retirement, migration, Liquibase change delivery, and operational history. A production implementation could be embedded in giportal or linked as a specialist workspace with shared enterprise identity. This standalone website is a design preview, not a working giportal integration.
+
+## Run and build
 
 Requires Node.js 20.19+ or 22.12+.
 
@@ -11,51 +13,45 @@ npm ci
 npm run dev -- --port 3000
 ```
 
-## Production build
-
 ```sh
 npm run build
 npm run preview
 ```
 
-## Explore
+## Workflows
 
-- **Overview:** workspace health, platform catalog, services, and recent activity.
-- **Service catalog:** Oracle, SQL Server, IBM Db2, PostgreSQL, MongoDB, and Cloudera, with category filters.
-- **My services:** search, environment filters, CSV export, connection endpoints, and simulated restart actions.
-- **Requests:** three-step provisioning with input validation, review, status tracking, and cancellation.
-- **Usage & insights:** mock resource charts, time ranges, and service distribution.
-- **Settings:** locally persisted notification preferences.
+- **Overview:** database estate, backup and version posture, operational work, and an explicit giportal/BasePort relationship.
+- **Database inventory:** Oracle, SQL Server, Db2, PostgreSQL, MongoDB, and Cloudera; filter by platform/environment/team; export CSV; inspect ownership, version, resource allocation, and giportal references.
+- **Lifecycle operations:** preflight, change context, maintenance windows, scheduling, simulated execution, restart, patch, upgrade, and retirement.
+- **Backup & recovery:** on-demand backups, verification metadata, retention, and recovery rehearsal via isolated development clones. Sources remain unchanged; clones need their own protection policy.
+- **Migrations:** same-platform mock transfers into staging, source backup prerequisites, reconciliation results, and migration history. Cross-engine work is shown as an assessment requiring schema mapping and reviewed cutover planning, not as an automatic supported conversion.
+- **Liquibase changes:** mock repository binding, per-database changeset status, PostgreSQL statement previews, validation, production approval, update, and defined rollback. Other relational engines show adapter-specific preview placeholders; real engine SQL must be generated and reviewed. MongoDB needs extension-specific configuration; Cloudera dataset workflows need platform-native integration.
+- **Audit & activity:** action, database, actor, change reference, status, and outcome in one activity trail.
+- **giportal handoff:** simulated registration of an already provisioned service with its source reference.
 
-Service and request changes exist only in memory and reset on refresh. Notification preferences are stored in browser localStorage. Connection endpoints and workspace identities are fictional. The interface supports desktop and mobile screens; press Escape to close dialogs or Cmd/Ctrl+K to focus search on desktop.
+All state is in memory and resets on reload. All connection endpoints, versions, checks, approvals, backups, metrics, SQL execution, integrations, and operations are illustrative. No actual infrastructure is provisioned or managed. All browser tests operate on mock state only.
+
+## Binaya's manager demo
+
+Share `https://ddecoursey.github.io/BasePort/?demo=binaya` for the nine-step guided demo. It explains the role beside giportal, inventory, recovery, maintenance, migration, Liquibase delivery, and management value. It supports platform choice, Back, Replay, and Escape. Demo changes are isolated and the original records are restored on exit. The normal sidebar also offers **Guided manager demo**.
 
 ## Validation
 
-Production build verified with `npm run build`. Browser smoke checks exercised provisioning and validation, filtering, service details, restart feedback, catalog categories, chart periods, saved preferences, and mobile navigation with no browser runtime errors.
-
-## Share with GitHub Pages
-
-The included `.github/workflows/deploy-pages.yml` builds and deploys this static frontend after pushes to `main`, or when manually run from the Actions tab.
-
-1. Commit and push the project, including the workflow and `package-lock.json`, to GitHub.
-2. In the repository, open **Settings → Pages → Build and deployment**, and set **Source** to **GitHub Actions**.
-3. Open **Actions → Deploy BasePort to GitHub Pages → Run workflow** on `main` (or push another change to `main`).
-4. After deployment succeeds, open the site URL shown in **Settings → Pages** or the workflow's deployment output. For `ddecoursey/BasePort`, the default URL is `https://ddecoursey.github.io/BasePort/`.
-
-The Pages build uses relative asset URLs so it works under a repository subpath. No API keys or custom deployment secrets are required. Deployment has not been run from this workspace; the URL becomes available only after a successful GitHub deployment.
-
-## Guided demo for Binaya
-
-Share `https://ddecoursey.github.io/BasePort/?demo=binaya` to start the personalized manager walkthrough immediately. The regular overview also includes a **Start guided demo** button, and the sidebar offers **Guided manager demo** from any page.
-
-The nine-step tour explains the purpose of BasePort, its intended business value, the platform catalog, a prefilled service request, review and tracking, simulated approval/provisioning, service ownership, and usage insights. The viewer can choose any of the six platforms, go back, replay, or leave with Escape. The summary separates the frontend concept from production integration requirements and proposes measures for evaluating value.
-
-Demo requests and services are temporary: finishing or exiting restores the prior services, requests, page, and filters. Existing user-created mock requests remain intact. The direct demo URL contains no authentication or personal data beyond the first name used in the greeting.
-
-With the dev server running, verify the tour on desktop and mobile:
+With the local development server running:
 
 ```sh
+npm run test:dbaas
 npm run test:demo
 ```
 
-The browser smoke script uses installed Chromium when available, or Playwright's Chromium otherwise. Set `DEMO_TEST_URL` to test another local server. All interactions remain mock-only.
+The DBaaS smoke test checks meaningful state transitions and guardrails: production change references, verified restore points, clone registration, preflight failure, scheduling/execution, version updates, migration validation, database-scoped Liquibase state and rollback, unsupported capabilities, retirement, handoff, and audit records. The manager demo test runs on desktop and mobile, checks keyboard focus and platform selection, and verifies demo cleanup preserves existing backups.
+
+Tests use `/usr/bin/chromium` in the cloud environment. The manager test falls back to Playwright's installed Chromium elsewhere. Set `DEMO_TEST_URL` to use another local server.
+
+## GitHub Pages
+
+`.github/workflows/deploy-pages.yml` builds the static production frontend after pushes to `main` or a manual workflow dispatch. Relative asset URLs support repository subpaths.
+
+Use **Settings → Pages → Source → GitHub Actions** for workflow-based publishing. The currently available GitHub integration can deploy a Pages artifact but cannot change that administrative setting. If legacy branch publishing is still configured, it also triggers a source build; cancel the source build for the same commit before deploying the built artifact to prevent it replacing the frontend with raw source.
+
+Site: `https://ddecoursey.github.io/BasePort/`. No custom deployment secrets or application API keys are required.

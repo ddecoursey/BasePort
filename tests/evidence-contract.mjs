@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {initialServices} from '../src/data.js';
+import {initialEvidence,validateObservation,assess,desiredFacts,MAX_AGE_MS} from '../src/controlPlane.js';
+const services=initialServices,evidence=initialEvidence(),service=services[1],now=Date.now();
+const payload={schemaVersion:'1.0',serviceId:service.id,eventId:'test-fresh',sequence:101,observedAt:new Date(now).toISOString(),source:'aap-inventory',jobId:'AAP-901',facts:desiredFacts(service)};
+const validate=(patch={})=>validateObservation({...payload,...patch},services,evidence,[],now);
+assert.equal(assess(service,evidence[service.id],now).status,'Drift');
+assert.equal(assess(services[5],evidence[services[5].id],now).status,'Unknown');
+assert.equal(assess(service,{...evidence[service.id],observedAt:new Date(now-MAX_AGE_MS-1).toISOString()},now).status,'Unknown');
+const accepted=validate();assert(accepted.record);assert.equal(assess(service,accepted.record,now).status,'Aligned');
+for(const patch of [{schemaVersion:'2.0'},{serviceId:'unknown'},{eventId:''},{source:'unbound-source'},{jobId:''},{sequence:100},{sequence:1.2},{observedAt:'invalid'},{observedAt:new Date(now+120000).toISOString()},{observedAt:new Date(now-MAX_AGE_MS-1).toISOString()},{facts:{...payload.facts,tlsEnabled:'true'}},{facts:{...payload.facts,retentionDays:1.5}},{facts:{...payload.facts,version:''}}])assert(validate(patch).error,JSON.stringify(patch));
+assert(validateObservation(payload,services,evidence,['test-fresh'],now).error.includes('Duplicate'));
+assert.equal(evidence[service.id].facts.tlsEnabled,false,'Rejected inputs changed evidence');
+assert(assess(services[3],{...evidence[services[3].id],facts:desiredFacts(services[3])},now).findings.some(f=>f.key==='recoveryPolicy'),'A config update cleared an unrelated backup policy gap');
+console.log('Evidence contract passed: schema, provenance, freshness, idempotency, sequence, types, state isolation and recovery-policy separation.');
